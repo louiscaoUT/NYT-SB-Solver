@@ -36,6 +36,7 @@ def preprocess_dictionary(dictionary: dict, letters: list, required: str):
         - letters for spelling bee that day: list
         - required letter: str
     - Output: dictionary consisting of possible words given letters"""
+
     letters_set = set(letters)
     # Keep words that have the required letter and consist only of the provided letters
     return {
@@ -43,6 +44,87 @@ def preprocess_dictionary(dictionary: dict, letters: list, required: str):
         for word in dictionary
         if required in word and set(word).issubset(letters_set) and len(word) >= 4
     }
+
+
+def print_error() -> None:
+    print("***Misinput detected, please try again***", end="\n\n")
+
+
+def get_letters():
+    """Function gets the 7 unique letters of the game"""
+
+    # get letters
+    while True:
+        letters = input(
+            "Enter the 7 unique letters of the day with no spaces in between: "
+        ).strip()
+
+        try:
+            # turn into list
+            letters = [x.lower() for x in letters]
+            return validate_letters(letters=letters)
+
+        except ValueError:
+            # if error, reprompt
+            print_error()
+
+
+def validate_letters(letters):
+    try:
+        if len(set(letters)) != 7 or not (all(x.isalpha() for x in set(letters))):
+            raise ValueError()
+        return letters
+
+    except ValueError:
+        raise ValueError("Letters must be 7 unique letters!")
+
+
+def get_required_letter(letters):
+    """Function gets the required letter"""
+
+    while True:
+        letter = input("Enter the required letter for today: ").strip().lower()
+        try:
+            return validate_required_letter(letter=letter, letters=letters)
+        except ValueError:
+            print_error()
+
+
+def validate_required_letter(letter, letters):
+    try:
+        if letter not in set(letters) or not (letter.isalpha()):
+            raise ValueError()
+        else:
+            return letter
+    except ValueError:
+        raise ValueError("Letter must be one of the 7 provided!")
+
+
+def get_length():
+    """Function gets family of answers the user wants to see"""
+
+    while True:
+        length = (
+            input(
+                "Enter the length of word you want to see from 4-7 inclusive. To exit press Enter: "
+            )
+            .strip()
+            .lower()
+        )
+        try:
+            return validate_length(length=length)
+        except ValueError:
+            print_error()
+
+
+def validate_length(length):
+    try:
+        if not length or 4 <= int(length) <= 7 or length == "all":
+            return length
+        else:
+            raise ValueError()
+    except ValueError:
+        raise ValueError("Length has to be 4-7 inclusive or 'all'!")
 
 
 def dfs(
@@ -96,6 +178,8 @@ def print_answers(answers: list, length: str) -> None:
     # all the answers
     if length == "all":
         for i, v in reversed(list(enumerate(answers, start=4))):
+            if not v:
+                v = "No valid answers"
             print(f"\nAnswers of length {i}:", v, sep="\n", end="\n\n")
     else:
         print(
@@ -109,14 +193,11 @@ def print_answers(answers: list, length: str) -> None:
 def main():
     """Program takes in user input to solve the NYT spelling bee game"""
     # ask for letters for today
-    letters = input(
-        "Enter each letter in the spelling bee with no spaces. To exit press Enter: "
-    ).strip()
-    letters = [x for x in letters]
+    letters = get_letters()
 
     while letters:
         # ask for the required letter in spelling bee
-        required = input("Enter the required letter for today: ")
+        required = get_required_letter(letters=letters)
 
         # list below will store the family of strings by length
         answers = [set() for _ in range(4)]
@@ -130,15 +211,11 @@ def main():
             dfs(letters, stack, dictionary, answers, required, stop)
 
         # get their input to show answers
-        length = input(
-            "Enter the length of words you want to see, if you want to see all type 'all': "
-        )
+        length = get_length()
+
         while length:
             print_answers(answers, length)
-
-            length = input(
-                """\nEnter the length of words you want to see, if you want to see all type 'all'. If you want to exit press Enter: """
-            )
+            length = get_length()
 
         # break out early
         if not length:
@@ -146,13 +223,7 @@ def main():
             continue
 
         # loop
-        letters = (
-            input(
-                "Enter each letter in the spelling bee, each separated by a space. To exit press Enter: "
-            )
-            .strip()
-            .split()
-        )
+        letters = get_letters()
 
 
 if __name__ == "__main__":
