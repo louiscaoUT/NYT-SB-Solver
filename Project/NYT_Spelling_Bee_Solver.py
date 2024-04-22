@@ -119,7 +119,7 @@ def get_length():
 
 def validate_length(length):
     try:
-        if not length or 4 <= int(length) <= 7 or length == "all":
+        if not length or length == "all" or 4 <= int(length) <= 7 :
             return length
         else:
             raise ValueError()

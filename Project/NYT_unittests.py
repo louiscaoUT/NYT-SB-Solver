@@ -57,6 +57,9 @@ class Test_NYT(unittest.TestCase):
         # length is a correct input
         self.assertEqual(validate_length(length="7"), "7")
 
+        # length is all the family of answers
+        self.assertEqual(validate_length(length="all"), "all")
+
 
 if __name__ == "__main__":
     unittest.main()
