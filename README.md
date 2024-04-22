@@ -11,3 +11,5 @@ As for test cases, we manually define them by inputting historical *Spelling-Bee
 While the program is functional now, it is relatively slow (on the order of a few seconds in the upper limit). Our current implementation does not check for redundant subproblems, and that clearly has performance concerns.
 
 Please note that in this implementation, the required letter is typed with the entire family of letters, and then by itself. E.g., when asked to input the letters in the spelling bee, one would type `nchikmu` and then `n` on the next line.
+
+Credits to this github repository for the dictionary https://github.com/dwyl/english-words?tab=readme-ov-file
